@@ -15,13 +15,7 @@
 
 ## 快速开始
 
-基于 Nitro 构建，使用 Scheduled Tasks 实现定时任务来签到，查看 [Nitro 文档](https://nitro.build/guide/tasks#platform-support) 了解支持的平台。
-
-### Cloudflare Workers 部署
-
-通过一键部署到 Cloudflare Workers，只需要[配置对应的环境变量](#配置说明)即可。
-
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/AEtherside/skland-daily-attendance)
+基于 Nitro 构建，使用 Scheduled Tasks 实现定时任务来签到。
 
 ### GitHub Actions 部署
 
@@ -88,119 +82,6 @@
 - GitHub Actions 免费额度为每月 2000 分钟，本项目的签到任务约消耗 1-2 分钟/次
 - 确保仓库为 Public 或拥有 GitHub Actions 的私有仓库配额
 - 如果长时间（60天）没有任何提交，GitHub 会自动停用 Actions，保活工作流会自动处理这个问题（会带来额外的 commit，可能会导致与上游仓库无法及时同步）
-
-</details>
-
-### Docker 部署
-
-本项目提供了 Docker 和 Docker Compose 配置，方便快速部署。Docker 镜像已发布到 [GitHub Container Registry](https://github.com/aetherside/skland-daily-attendance/pkgs/container/skland-daily-attendance)。
-
-<details>
-<summary>展开查看详细步骤</summary>
-
-#### 使用预构建镜像（推荐）
-
-直接拉取并运行已构建的镜像：
-
-```bash
-docker pull ghcr.io/aetherside/skland-daily-attendance:main
-```
-
-然后使用 Docker Compose：
-
-1. 创建 `docker-compose.yml` 文件：
-
-```yaml
-services:
-  skland-attendance:
-    image: ghcr.io/aetherside/skland-daily-attendance:main
-    container_name: skland-attendance
-    restart: unless-stopped
-    env_file:
-      - .env
-    volumes:
-      - ./data:/app/.data
-```
-
-2. 创建 `.env` 文件并配置环境变量：
-
-```bash
-# 必填：森空岛凭据，多个用逗号分隔
-SKLAND_TOKENS=your-token-1,your-token-2
-
-# 可选：通知 URL
-SKLAND_NOTIFICATION_URLS=your-notification-url
-
-# 可选：最大重试次数（默认为 3）
-SKLAND_MAX_RETRIES=3
-
-# 可选：隐藏角色名（设置任意值即可开启，推荐使用 true 或 1）
-SKLAND_ANONYMOUS=true
-
-# 可选：持久化存储配置（使用 Upstash Redis）
-# KV_REST_API_URL=https://your-upstash-redis.upstash.io
-# KV_REST_API_TOKEN=your-token
-
-# 可选：使用 Redis
-# REDIS_URL=rediss://default:password@your-redis-host:6379
-
-# 可选：使用 AWS S3 兼容存储
-# S3_ACCESS_KEY_ID=your-access-key
-# S3_SECRET_ACCESS_KEY=your-secret-key
-# S3_BUCKET=your-bucket-name
-# S3_REGION=us-east-1
-# S3_ENDPOINT=https://your-s3-endpoint.com
-
-# 可选：禁用持久化存储
-# DISABLE_KV=false
-```
-
-3. 启动服务：
-
-```bash
-docker compose up -d
-```
-
-4. 查看日志：
-
-```bash
-docker compose logs -f
-```
-
-5. 停止服务：
-
-```bash
-docker compose down
-```
-
-#### 使用本地构建镜像
-
-如果需要自定义构建，可以使用源码构建：
-
-1. 构建镜像：
-
-```bash
-docker build -t skland-attendance .
-```
-
-2. 运行容器：
-
-```bash
-docker run -d \
-  --name skland-attendance \
-  --restart unless-stopped \
-  -e SKLAND_TOKENS="your-token-1,your-token-2" \
-  -e SKLAND_NOTIFICATION_URLS="your-notification-url" \
-  -v $(pwd)/data:/app/.data \
-  skland-attendance
-```
-
-#### Docker 部署注意事项
-
-- 默认使用本地文件存储，数据会持久化到 `./data` 目录
-- 如果需要使用 Redis 持久化，可以取消注释 `docker-compose.yml` 中的 Redis 服务配置
-- 容器会按照 `nitro.config.ts` 中配置的定时任务自动执行签到（默认每 2 小时执行一次）
-- 如需调整定时任务频率，请修改 `nitro.config.ts` 中的 `scheduledTasks` 配置后重新构建镜像
 
 </details>
 
@@ -317,9 +198,6 @@ SKLAND_ANONYMOUS=true
 - 本项目仅用于学习和研究目的
 - 请勿频繁调用 API，以免影响账号安全
 
-## 相关项目
-
-- [罗德岛远程指挥部](https://github.com/enpitsuLin/rhodes-headquarters) - 浏览器扩展，用于监控森空岛信息
 
 ## License
 
