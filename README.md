@@ -197,8 +197,3 @@ SKLAND_ANONYMOUS=true
 
 - 本项目仅用于学习和研究目的
 - 请勿频繁调用 API，以免影响账号安全
-
-
-## License
-
-MIT
